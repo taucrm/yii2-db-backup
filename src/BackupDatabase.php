@@ -43,36 +43,14 @@ class BackupDatabase extends Component
         }
 
         $backupFile = $monthFolder . DIRECTORY_SEPARATOR . "bpm_{$currentDateTime}.sql";
+        $command = "mysqldump -u {$this->dbUser} -p'{$this->dbPassword}' {$this->dbName} > {$backupFile}";
 
-        try {
-            $db = Yii::$app->db;
-            $tables = $db->createCommand('SHOW TABLES')->queryColumn();
+        exec($command, $output, $returnVar);
 
-            $file = fopen($backupFile, 'w');
-
-            foreach ($tables as $table) {
-                // Удаление таблицы перед восстановлением
-                fwrite($file, "DROP TABLE IF EXISTS `$table`;\n");
-
-                // Получаем структуру таблицы
-                $createTable = $db->createCommand("SHOW CREATE TABLE `$table`")->queryOne();
-                fwrite($file, $createTable['Create Table'] . ";\n\n");
-
-                // Получаем все строки из таблицы
-                $rows = (new \yii\db\Query())->from($table)->all();
-                foreach ($rows as $row) {
-                    $row = array_map([$db, 'quoteValue'], $row);
-                    $data = implode(', ', $row);
-                    fwrite($file, "INSERT INTO `$table` VALUES ($data);\n");
-                }
-                fwrite($file, "\n\n");
-            }
-
-            fclose($file);
-
+        if ($returnVar === 0) {
             Yii::info("Backup создан: {$backupFile}", 'backup');
-        } catch (\Exception $e) {
-            Yii::error("Ошибка создания бэкапа: " . $e->getMessage(), 'backup');
+        } else {
+            Yii::error("Ошибка создания бэкапа. Код: {$returnVar}", 'backup');
         }
     }
 }
