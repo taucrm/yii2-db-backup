@@ -1,0 +1,24 @@
+{
+  "name": "taucrm/yii2-db-backup",
+  "description": "A Yii2 component for creating database backups using `mysqldump`. Organizes backups into monthly folders, making it easy to manage and retrieve backups by date.",
+  "type": "yii2-extension",
+  "keywords": [
+    "yii2",
+    "extension"
+  ],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "TauCRM.com",
+      "email": "dev@taucrm.com"
+    }
+  ],
+  "require": {
+    "yiisoft/yii2": "~2.0.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "taucrm\\db\\": "src/"
+    }
+  }
+}
